@@ -1,0 +1,14 @@
+# Slide AI - Python Sidecar Dependencies
+# Install with: pip install -r requirements.txt
+
+PyMuPDF>=1.23.0
+python-pptx>=0.6.21
+Pillow>=10.0.0
+
+# OCR (可选 — 用于扫描版 PDF)
+# paddleocr>=2.7.0
+# pytesseract>=0.3.10
+
+# RAG 向量检索 (可选)
+# sentence-transformers>=2.2.0
+# sqlite-vec>=0.1.0
