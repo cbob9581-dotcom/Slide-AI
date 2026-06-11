@@ -1,6 +1,7 @@
 # Slide AI — 智能课件学习助手
 
 基于 **Tauri 2.x** 桌面应用，左侧展示原始课件（PDF/PPT），右侧由 AI 逐页生成生动讲解，底部支持单页/全文档问答。
+<img width="1049" height="694" alt="image" src="https://github.com/user-attachments/assets/925c1bb0-6205-46bd-9140-d999816c558e" />
 
 ## 技术栈
 
