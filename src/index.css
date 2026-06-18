@@ -23,6 +23,61 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ====== 浅色主题覆盖 ====== */
+html.light,
+html.light body,
+html.light #root {
+  background: #f9fafb;
+  color: #111827;
+}
+html.light .bg-gray-950 { background: #f9fafb; }
+html.light .bg-gray-950\/95 { background: #f9fafbf2; }
+html.light .bg-gray-950\/90 { background: #f9fafbe6; }
+html.light .bg-gray-900 { background: #ffffff; }
+html.light .bg-gray-800 { background: #f3f4f6; }
+html.light .bg-gray-800\/80 { background: #f3f4f6cc; }
+html.light .bg-gray-900\/80 { background: #ffffffcc; }
+html.light .bg-gray-900\/50 { background: #ffffff80; }
+html.light .bg-gray-800\/50 { background: #f3f4f680; }
+html.light .bg-black\/60 { background: #00000030; }
+html.light .text-gray-100 { color: #111827; }
+html.light .text-gray-200 { color: #1f2937; }
+html.light .text-gray-300 { color: #374151; }
+html.light .text-gray-400 { color: #4b5563; }
+html.light .text-gray-500 { color: #6b7280; }
+html.light .text-gray-600 { color: #9ca3af; }
+html.light .border-gray-800 { border-color: #e5e7eb; }
+html.light .border-gray-700 { border-color: #d1d5db; }
+html.light .border-gray-700\/50 { border-color: #d1d5db80; }
+html.light .hover\:bg-gray-800:hover { background: #e5e7eb; }
+html.light .hover\:bg-gray-700:hover { background: #d1d5db; }
+html.light .hover\:bg-red-900\/40:hover { background: #fee2e2; }
+html.light .hover\:bg-red-900\/50:hover { background: #fee2e2; }
+html.light .hover\:text-gray-200:hover { color: #111827; }
+html.light .hover\:text-gray-300:hover { color: #111827; }
+html.light .hover\:text-gray-400:hover { color: #1f2937; }
+html.light .hover\:text-red-400:hover { color: #dc2626; }
+html.light .placeholder-gray-500::placeholder { color: #9ca3af; }
+html.light .prose-invert {
+  --tw-prose-body: #111827;
+  --tw-prose-headings: #111827;
+  --tw-prose-bold: #111827;
+  --tw-prose-links: #2563eb;
+  --tw-prose-code: #111827;
+  --tw-prose-pre-bg: #f3f4f6;
+  --tw-prose-pre-code: #111827;
+}
+html.light input.bg-gray-800,
+html.light textarea.bg-gray-800,
+html.light select.bg-gray-800 { background: #f3f4f6; color: #111827; }
+html.light input.border-gray-700,
+html.light textarea.border-gray-700,
+html.light select.border-gray-700 { border-color: #d1d5db; }
+html.light .bg-blue-600\/30 { background: #dbeafe; color: #1e40af; }
+html.light .bg-blue-600\/30 .text-gray-100 { color: #1e40af; }
+html.light ::-webkit-scrollbar-thumb { background: #d1d5db; }
+html.light ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

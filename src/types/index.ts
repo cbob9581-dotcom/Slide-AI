@@ -42,6 +42,8 @@ export type ApiProvider = 'openai' | 'anthropic' | 'gemini' | 'custom';
 export type ExplainStyle = 'vivid' | 'exam' | 'quick';
 export type Language = 'zh' | 'en';
 
+export type Theme = 'dark' | 'light';
+
 export interface Settings {
   apiProvider: ApiProvider;
   apiKey: string;
@@ -51,6 +53,7 @@ export interface Settings {
   chatSystemPrompt: string;
   explainStyle: ExplainStyle;
   language: Language;
+  theme: Theme;
   autoExplain: boolean;
   preGenerateAhead: number;
 }
@@ -136,6 +139,7 @@ export const DEFAULT_SETTINGS: Settings = {
   chatSystemPrompt: DEFAULT_CHAT_SYSTEM_PROMPT,
   explainStyle: 'vivid',
   language: 'zh',
+  theme: 'dark',
   autoExplain: true,
   preGenerateAhead: 2,
 };

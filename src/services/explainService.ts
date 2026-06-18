@@ -39,12 +39,16 @@ function buildExplainPrompt(
     exam: '突出考点，标出重点和易错点',
     quick: '简洁概括，不超过200字',
   };
+  const langHint = s.language === 'en'
+    ? 'Please output in English.'
+    : '请用中文输出。';
 
   return `
 页面文字：${page.extractedText || '（无文字）'}
 ${page.speakerNotes ? `演讲者备注：${page.speakerNotes}` : ''}
 ${prevSummary ? `前一页内容：${prevSummary}` : ''}
 讲解风格：${styleMap[s.explainStyle] || styleMap.vivid}
+${langHint}
 请用 Markdown 格式输出讲解。
 `.trim();
 }
@@ -135,64 +139,56 @@ ${page.explanation ? `AI讲解：${page.explanation}` : ''}`;
 }
 
 /**
- * 预生成队列管理
+ * 预生成队列 —— 并行滑动窗口
+ * 用户在页 N 时，同时并行预生成 N+1 到 N+K 页
  */
-const preGenerateQueue: Set<string> = new Set();
-let preGenerateAbortController: AbortController | null = null;
+const preGenRunning = new Map<string, AbortController>();
 
 export function cancelPreGenerate() {
-  preGenerateAbortController?.abort();
-  preGenerateQueue.clear();
-  preGenerateAbortController = null;
+  preGenRunning.forEach((ctrl) => ctrl.abort());
+  preGenRunning.clear();
 }
 
 export async function triggerPreGenerate(
-  startPage: number,
-  count: number
+  currentPage: number,
+  aheadCount: number
 ): Promise<void> {
-  if (count <= 0) return;
+  if (aheadCount <= 0) return;
 
   const { pages, updatePage } = useDocumentStore.getState();
-  const settings = useSettingsStore.getState().settings;
 
-  cancelPreGenerate();
-  preGenerateAbortController = new AbortController();
-  const signal = preGenerateAbortController.signal;
+  // 计算滑动窗口：当前页之后的 aheadCount 页
+  const targets: { idx: number; page: Page; prevSummary: string }[] = [];
+  for (let offset = 1; offset <= aheadCount; offset++) {
+    const idx = currentPage - 1 + offset;
+    if (idx >= pages.length) break;
+    const page = pages[idx];
+    if (page.explainStatus === 'done' || page.explainStatus === 'generating') continue;
+    const prev = pages[idx - 1];
+    targets.push({ idx, page, prevSummary: prev?.summary ?? '' });
+  }
 
-  for (let i = 0; i < count; i++) {
-    const pageIdx = startPage - 1 + i;
-    if (pageIdx >= pages.length) break;
+  if (targets.length === 0) return;
 
-    const page = pages[pageIdx];
-    if (page.explainStatus === 'done') continue;
-
-    const key = page.id;
-    if (preGenerateQueue.has(key)) continue;
-    preGenerateQueue.add(key);
+  // 并行发起所有预生成请求
+  await Promise.all(targets.map(async ({ page, prevSummary }) => {
+    const ctrl = new AbortController();
+    preGenRunning.set(page.id, ctrl);
 
     try {
       updatePage(page.id, { explainStatus: 'generating' });
 
-      const prevPage = pages[pageIdx - 1];
-      const prevSummary = prevPage?.summary ?? '';
-
-      const result = await generateExplanation(
-        page,
-        prevSummary,
-        () => {}, // 预生成不流式显示
-        signal
+      const { explanation, summary } = await generateExplanation(
+        page, prevSummary, () => {}, ctrl.signal
       );
 
-      updatePage(page.id, {
-        explanation: result.explanation,
-        summary: result.summary,
-        explainStatus: 'done',
-      });
+      updatePage(page.id, { explanation, summary, explainStatus: 'done' });
     } catch (err) {
-      if ((err as Error).name === 'AbortError') break;
-      updatePage(page.id, { explainStatus: 'failed' });
+      if ((err as Error).name !== 'AbortError') {
+        updatePage(page.id, { explainStatus: 'failed' });
+      }
     } finally {
-      preGenerateQueue.delete(key);
+      preGenRunning.delete(page.id);
     }
-  }
+  }));
 }

@@ -22,12 +22,7 @@ export const useSettingsStore = create<SettingsState>()(
       resetSettings: () => set({ settings: DEFAULT_SETTINGS }),
     }),
     {
-      name: 'slide-ai-settings',
-      partialize: (state) => {
-        // 不持久化 apiKey（用系统钥匙串存储）
-        const { apiKey, ...rest } = state.settings;
-        return { settings: { ...rest, apiKey: '' } };
-      },
+      name: 'slide-ai-settings-v2',
     }
   )
 );
